@@ -513,6 +513,16 @@ a { color: inherit; text-decoration: none; }
   border-style: dashed;
 }
 
+/* ADD THIS RIGHT HERE ↓ */
+.about-img {
+  width: 100%;
+  aspect-ratio: 4/5;
+  object-fit: cover;
+  border-radius: 10px;
+  border: 1px solid var(--border-soft);
+  display: block;
+}
+
 /* CHART CARD */
 .chart-card {
   border-radius: 10px;
