@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Equity Research Dashboard — Microsoft, Visa, Seagate</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#EAE7DD; --panel:#F5F3EC; --ink:#1B2430; --ink-soft:#5B6472; --ink-faint:#8B9099;
+    --rule:#C9C2AF; --rule-soft:#DAD5C6; --strip:#181C22; --strip-ink:#D8D2C2;
+    --red:#9B3226; --red-bg:#EFDAD4; --green:#33623F; --green-bg:#DDE7D9; --amber:#9C6A18;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:'Inter',sans-serif;-webkit-font-smoothing:antialiased;}
+  .mono{font-family:'IBM Plex Mono',monospace;}
+  .wrap{max-width:960px;margin:0 auto;}
+  .strip{background:var(--strip);color:var(--strip-ink);font-family:'IBM Plex Mono',monospace;font-size:13px;padding:10px 24px;display:flex;gap:28px;align-items:center;letter-spacing:0.02em;flex-wrap:wrap;}
+  .strip .tag{color:#7A8494;margin-right:8px;}
+  .strip .chg{color:#C0574A;font-weight:500;}
+  header.masthead{padding:56px 24px 32px;border-bottom:1px solid var(--rule);}
+  .eyebrow{font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:0.12em;text-transform:uppercase;color:var(--ink-soft);margin:0 0 14px;}
+  h1.title{font-family:'Fraunces',serif;font-weight:500;font-size:44px;line-height:1.08;margin:0 0 10px;letter-spacing:-0.01em;}
+  h2.company-title{font-family:'Fraunces',serif;font-weight:500;font-size:32px;line-height:1.1;margin:0 0 6px;letter-spacing:-0.01em;}
+  .subtitle{font-size:16px;color:var(--ink-soft);margin:0;max-width:560px;line-height:1.5;}
+  .company-block{border-top:6px solid var(--ink);}
+  .company-header{padding:44px 24px 20px;}
+  section{padding:36px 24px;}
+  section.bordered{border-bottom:1px solid var(--rule);}
+  .section-label{font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink-faint);margin:0 0 20px;}
+  .kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--rule);border:1px solid var(--rule);}
+  .kpi{background:var(--panel);padding:20px 18px;}
+  .kpi .label{font-size:12px;color:var(--ink-soft);margin:0 0 8px;}
+  .kpi .value{font-family:'IBM Plex Mono',monospace;font-size:26px;font-weight:500;margin:0;}
+  .kpi.flag-red .value{color:var(--red);}
+  .kpi .rec-badge{display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:500;padding:4px 10px;border-radius:3px;background:var(--red-bg);color:var(--red);}
+  .kpi .note{font-size:11px;color:var(--ink-faint);margin:8px 0 0;line-height:1.4;}
+  .snapshot{display:grid;grid-template-columns:repeat(4,1fr);gap:20px 28px;}
+  .snap-item .k{font-size:12px;color:var(--ink-soft);margin:0 0 4px;}
+  .snap-item .v{font-family:'IBM Plex Mono',monospace;font-size:16px;margin:0;}
+  .chart-block{margin-bottom:8px;}
+  .chart-title{font-size:14px;font-weight:500;margin:0 0 4px;}
+  .chart-sub{font-size:12px;color:var(--ink-soft);margin:0 0 14px;}
+  .legend-row{display:flex;gap:16px;margin-bottom:6px;font-size:12px;color:var(--ink-soft);}
+  .legend-row span{display:flex;align-items:center;gap:5px;}
+  .swatch{width:9px;height:9px;border-radius:1px;display:inline-block;}
+  .chart-wrap{position:relative;width:100%;height:230px;}
+  .two-col{display:grid;grid-template-columns:1fr 1fr;gap:40px;}
+  table.finance{width:100%;border-collapse:collapse;font-family:'IBM Plex Mono',monospace;font-size:13px;}
+  table.finance th{text-align:left;font-family:'Inter',sans-serif;font-weight:500;font-size:12px;color:var(--ink-soft);padding:8px 4px;border-bottom:1px solid var(--rule);}
+  table.finance td{padding:9px 4px;border-bottom:1px solid var(--rule-soft);}
+  table.finance td.num, table.finance th.num{text-align:right;}
+  table.finance tr:last-child td{border-bottom:1px solid var(--ink);font-weight:500;}
+  .scenario{display:flex;flex-direction:column;gap:14px;}
+  .scen-row{display:grid;grid-template-columns:90px 1fr 70px;align-items:center;gap:14px;}
+  .scen-name{font-size:13px;font-weight:500;}
+  .scen-track{background:var(--rule-soft);border-radius:2px;height:10px;position:relative;}
+  .scen-fill{height:10px;border-radius:2px;}
+  .scen-val{font-family:'IBM Plex Mono',monospace;font-size:14px;text-align:right;}
+  .thesis-grid{display:grid;grid-template-columns:1fr 1fr;gap:40px;}
+  .thesis-col h3{font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:0.08em;text-transform:uppercase;margin:0 0 14px;}
+  .thesis-col.pos h3{color:var(--green);}
+  .thesis-col.risk h3{color:var(--red);}
+  .thesis-col ul{margin:0;padding:0 0 0 18px;}
+  .thesis-col li{font-size:14px;line-height:1.6;margin-bottom:10px;color:var(--ink);}
+  .flag-note{font-size:12px;color:var(--amber);background:#F1E7D0;border-left:3px solid var(--amber);padding:10px 14px;margin:0 0 18px;line-height:1.5;}
+  footer{padding:28px 24px 40px;font-size:12px;color:var(--ink-faint);line-height:1.6;}
+  @media (max-width:640px){
+    .kpi-row{grid-template-columns:repeat(2,1fr);}
+    .snapshot{grid-template-columns:repeat(2,1fr);}
+    .two-col, .thesis-grid{grid-template-columns:1fr;}
+    h1.title{font-size:32px;}
+  }
+</style>
+</head>
+<body>
+
+<div class="strip mono">
+  <div><span class="tag">NASDAQ</span>MSFT <span style="color:#E7E2D2;">381.70</span> <span class="chg">-54.4%</span></div>
+  <div><span class="tag">NYSE</span>V <span style="color:#E7E2D2;">368.73</span> <span class="chg">-43.1%</span></div>
+  <div><span class="tag">NASDAQ</span>STX <span style="color:#E7E2D2;">862.43</span> <span class="chg">-84.0%</span></div>
+</div>
+
+<div class="wrap">
+
+  <header class="masthead">
+    <div style="margin-bottom:28px;">
+      <span class="mono" style="font-size:14px; letter-spacing:0.14em; font-weight:500; color:var(--ink);">LEVIATHAN ALPHA</span>
+      <span class="mono" style="font-size:14px; letter-spacing:0.02em; color:var(--ink-soft);"> — Portfolio and Market Analytics</span>
+    </div>
+    <p class="eyebrow">Equity research · Discounted cash flow valuation</p>
+    <h1 class="title">Three-Company Portfolio Review</h1>
+    <p class="subtitle">Microsoft, Visa, and Seagate Technology — five-year financial review and base/bear/bull DCF valuation for each.</p>
+  </header>
+
+  <!-- ============ MICROSOFT ============ -->
+  <div class="company-block">
+  <div class="company-header">
+    <p class="eyebrow">01 / Technology &amp; cloud infrastructure</p>
+    <h2 class="company-title">Microsoft Corporation</h2>
+    <p class="subtitle">NASDAQ: MSFT</p>
+  </div>
+
+  <section class="bordered">
+    <div class="kpi-row">
+      <div class="kpi"><p class="label">Current price</p><p class="value">$381.70</p></div>
+      <div class="kpi"><p class="label">Fair value (base case)</p><p class="value">$174.00</p></div>
+      <div class="kpi flag-red" style="grid-column: span 2;"><p class="label">Recommendation</p><span class="rec-badge">Sell — December 2025 to April 2026</span></div>
+    </div>
+  </section>
+
+  <section class="bordered">
+    <p class="section-label">Company snapshot</p>
+    <div class="snapshot">
+      <div class="snap-item"><p class="k">Industry</p><p class="v">Software / cloud</p></div>
+      <div class="snap-item"><p class="k">Market cap</p><p class="v">$2.84T</p></div>
+      <div class="snap-item"><p class="k">Revenue (FY25)</p><p class="v">$281,724M</p></div>
+      <div class="snap-item"><p class="k">Free cash flow (FY25)</p><p class="v">$71,611M</p></div>
+      <div class="snap-item"><p class="k">P/E ratio (FY25)</p><p class="v">36.47x</p></div>
+      <div class="snap-item"><p class="k">WACC</p><p class="v">9.65%</p></div>
+      <div class="snap-item"><p class="k">Terminal growth</p><p class="v">3.00%</p></div>
+      <div class="snap-item"><p class="k">Shares outstanding</p><p class="v">7,430M</p></div>
+    </div>
+  </section>
+
+  <section class="bordered">
+    <p class="section-label">Growth trajectory</p>
+    <div class="two-col">
+      <div class="chart-block">
+        <p class="chart-title">Revenue</p>
+        <p class="chart-sub">FY2021&ndash;FY2025, $ millions</p>
+        <div class="chart-wrap"><canvas id="msftRevChart" role="img" aria-label="Bar chart of Microsoft revenue, fiscal 2021 through 2025">168,088 / 198,270 / 211,915 / 245,122 / 281,724</canvas></div>
+      </div>
+      <div class="chart-block">
+        <p class="chart-title">Free cash flow</p>
+        <div class="legend-row"><span><span class="swatch" style="background:#2a78d6;"></span>Actual</span><span><span class="swatch" style="background:#eb6834;"></span>Projected</span></div>
+        <div class="chart-wrap"><canvas id="msftFcfChart" role="img" aria-label="Line chart of Microsoft free cash flow, actual 2021 to 2025 and projected 2026 to 2030">Actual: 56,118 / 65,149 / 59,475 / 74,071 / 71,611. Projected: 76,108 / 80,888 / 85,968 / 91,366 / 97,104</canvas></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="bordered">
+    <p class="section-label">DCF assumptions &amp; valuation summary</p>
+    <div class="two-col">
+      <table class="finance">
+        <tr><th>Assumption</th><th class="num">Value</th></tr>
+        <tr><td>WACC</td><td class="num">9.65%</td></tr>
+        <tr><td>Terminal growth</td><td class="num">3.00%</td></tr>
+        <tr><td>FCF growth (forecast)</td><td class="num">6.28%</td></tr>
+        <tr><td>Forecast horizon</td><td class="num">5 years</td></tr>
+      </table>
+      <table class="finance">
+        <tr><th>Metric</th><th class="num">$M</th></tr>
+        <tr><td>PV of forecast FCF</td><td class="num">324,544</td></tr>
+        <tr><td>PV of terminal value</td><td class="num">940,000</td></tr>
+        <tr><td>Enterprise value</td><td class="num">1,264,544</td></tr>
+        <tr><td>Less: debt / plus: cash</td><td class="num">+17,000</td></tr>
+        <tr><td>Equity value</td><td class="num">1,281,544</td></tr>
+        <tr><td>Fair value / share</td><td class="num">$172&ndash;174</td></tr>
+      </table>
+    </div>
+  </section>
+
+  <section class="bordered">
+    <p class="section-label">Scenario analysis</p>
+    <div class="scenario">
+      <div class="scen-row"><p class="scen-name">Bear</p><div class="scen-track"><div class="scen-fill" style="width:61.7%; background:#8B9099;"></div></div><p class="scen-val">$140</p></div>
+      <div class="scen-row"><p class="scen-name">Base</p><div class="scen-track"><div class="scen-fill" style="width:76.7%; background:#9C6A18;"></div></div><p class="scen-val">$174</p></div>
+      <div class="scen-row"><p class="scen-name">Bull</p><div class="scen-track"><div class="scen-fill" style="width:100%; background:#33623F;"></div></div><p class="scen-val">$227</p></div>
+    </div>
+  </section>
+
+  <section class="bordered">
+    <p class="section-label">Investment thesis</p>
+    <div class="thesis-grid">
+      <div class="thesis-col pos">
+        <h3>Supports</h3>
+        <ul>
+          <li>Azure and cloud infrastructure continue to anchor top-line growth alongside a durable enterprise software franchise.</li>
+          <li>Operating margin expanded to 45.6% in FY25, showing the business is scaling profitably rather than just growing revenue.</li>
+          <li>Copilot and broader AI integration give Microsoft a distribution advantage across its existing installed base.</li>
+        </ul>
+      </div>
+      <div class="thesis-col risk">
+        <h3>Risks</h3>
+        <ul>
+          <li>Current price sits well above every scenario in this model, leaving little margin of safety if growth slows.</li>
+          <li>Heavy AI-related capital expenditure could pressure free cash flow growth in the near term.</li>
+          <li>A high P/E multiple (36&ndash;38x) makes the stock sensitive to any deceleration in cloud growth.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+  </div>
+
+  <!-- ============ VISA ============ -->
+  <div class="company-block">
+  <div class="company-header">
+    <p class="eyebrow">02 / Payments &amp; fintech infrastructure</p>
+    <h2 class="company-title">Visa Inc.</h2>
+    <p class="subtitle">NYSE: V</p>
+  </div>
+
+  <section class="bordered">
+    <div class="kpi-row">
+      <div class="kpi"><p class="label">Current price</p><p class="value">$368.73</p></div>
+      <div class="kpi"><p class="label">Fair value (base case)</p><p class="value">$209.96</p></div>
+      <div class="kpi flag-red" style="grid-column: span 2;"><p class="label">Recommendation</p><span class="rec-badge">Sell — December 2025 to April 2026</span></div>
+    </div>
+  </section>
+
+  <section class="bordered">
+    <p class="section-label">Company snapshot</p>
+    <div class="snapshot">
+      <div class="snap-item"><p class="k">Industry</p><p class="v">Payments / fintech</p></div>
+      <div class="snap-item"><p class="k">Market cap</p><p class="v">$688.7B</p></div>
+      <div class="snap-item"><p class="k">Revenue (FY25)</p><p class="v">$55,751M</p></div>
+      <div class="snap-item"><p class="k">Free cash flow (FY25)</p><p class="v">$21,577M</p></div>
+      <div class="snap-item"><p class="k">P/E ratio (FY25)</p><p class="v">30.29x</p></div>
+      <div class="snap-item"><p class="k">WACC</p><p class="v">9.00%</p></div>
+      <div class="snap-item"><p class="k">Terminal growth</p><p class="v">3.00%</p></div>
+      <div class="snap-item"><p class="k">Shares outstanding</p><p class="v">1.98B</p></div>
+    </div>
+  </section>
+
+  <section class="bordered">
+    <p class="section-label">Growth trajectory</p>
+    <div class="two-col">
+      <div class="chart-block">
+        <p class="chart-title">Revenue</p>
+        <p class="chart-sub">FY2021&ndash;FY2025, $ millions</p>
+        <div class="chart-wrap"><canvas id="visaRevChart" role="img" aria-label="Bar chart of Visa revenue, fiscal 2021 through 2025">24,105 / 39,605 / 44,950 / 49,690 / 55,751</canvas></div>
+      </div>
+      <div class="chart-block">
+        <p class="chart-title">Free cash flow</p>
+        <div class="legend-row"><span><span class="swatch" style="background:#2a78d6;"></span>Actual</span><span><span class="swatch" style="background:#eb6834;"></span>Projected</span></div>
+        <div class="chart-wrap"><canvas id="visaFcfChart" role="img" aria-label="Line chart of Visa free cash flow, actual 2021 to 2025 and projected 2026 to 2030">Actual: 14,522 / 17,879 / 19,734 / 18,693 / 21,577. Projected: 21,600 / 23,330 / 25,200 / 27,220 / 29,400</canvas></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="bordered">
+    <p class="section-label">DCF assumptions &amp; valuation summary</p>
+    <div class="two-col">
+      <table class="finance">
+        <tr><th>Assumption</th><th class="num">Value</th></tr>
+        <tr><td>WACC</td><td class="num">9.00%</td></tr>
+        <tr><td>Terminal growth</td><td class="num">3.00%</td></tr>
+        <tr><td>FCF growth (forecast)</td><td class="num">8.00%</td></tr>
+        <tr><td>Forecast horizon</td><td class="num">5 years</td></tr>
+      </table>
+      <table class="finance">
+        <tr><th>Metric</th><th class="num">$B</th></tr>
+        <tr><td>PV of forecast FCF</td><td class="num">97.28</td></tr>
+        <tr><td>Terminal value (undiscounted)</td><td class="num">504.67</td></tr>
+        <tr><td>Enterprise value</td><td class="num">425.32</td></tr>
+        <tr><td>Cash less debt</td><td class="num">-9.60</td></tr>
+        <tr><td>Equity value</td><td class="num">415.72</td></tr>
+        <tr><td>Fair value / share</td><td class="num">$209.96</td></tr>
+      </table>
+    </div>
+  </section>
+
+  <section class="bordered">
+    <p class="section-label">Scenario analysis</p>
+    <div class="scenario">
+      <div class="scen-row"><p class="scen-name">Bear</p><div class="scen-track"><div class="scen-fill" style="width:59.7%; background:#8B9099;"></div></div><p class="scen-val">$166.50</p></div>
+      <div class="scen-row"><p class="scen-name">Base</p><div class="scen-track"><div class="scen-fill" style="width:75.3%; background:#9C6A18;"></div></div><p class="scen-val">$209.96</p></div>
+      <div class="scen-row"><p class="scen-name">Bull</p><div class="scen-track"><div class="scen-fill" style="width:100%; background:#33623F;"></div></div><p class="scen-val">$278.80</p></div>
+    </div>
+  </section>
+
+  <section class="bordered">
+    <p class="section-label">Investment thesis</p>
+    <div class="thesis-grid">
+      <div class="thesis-col pos">
+        <h3>Supports</h3>
+        <ul>
+          <li>Visa's network effect and near-duopoly position in card payments give it exceptional pricing power and margin durability.</li>
+          <li>Net margin has held above 50% every year in this window, with ROE climbing to 52.1% in FY25.</li>
+          <li>Value-added services and cross-border volume give Visa growth levers beyond core transaction processing, including early AI-agent payment integrations.</li>
+        </ul>
+      </div>
+      <div class="thesis-col risk">
+        <h3>Risks</h3>
+        <ul>
+          <li>Current price sits well above every scenario in this model, leaving little margin of safety if growth decelerates.</li>
+          <li>Client incentives and operating expenses are rising faster than revenue, compressing operating margin from 65.6% to 60.0%.</li>
+          <li>Regulatory scrutiny of interchange fees remains an ongoing structural risk to the business model.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+  </div>
+
+  <!-- ============ SEAGATE ============ -->
+  <div class="company-block">
+  <div class="company-header">
+    <p class="eyebrow">03 / Data storage &amp; AI infrastructure hardware</p>
+    <h2 class="company-title">Seagate Technology Holdings</h2>
+    <p class="subtitle">NASDAQ: STX</p>
+  </div>
+
+  <section class="bordered">
+    <p class="flag-note">Several figures on this company's source sheet don't reconcile internally (FY23 operating expenses vs. operating income, an apparent FY24 liabilities/equity row swap, and a 2026 DCF base FCF that jumps well above the FY25 actual). The DCF math from the stated projections forward is internally consistent and shown as-is below — treat the base-year linkage with caution.</p>
+    <div class="kpi-row">
+      <div class="kpi"><p class="label">Current price</p><p class="value">$862.43</p></div>
+      <div class="kpi"><p class="label">Fair value (base case)</p><p class="value">$137.70</p></div>
+      <div class="kpi" style="grid-column: span 2;"><p class="label">Recommendation</p><span class="rec-badge" style="background:var(--green-bg); color:var(--green);">Buy — December 2025 to April 2026</span></div>
+    </div>
+  </section>
+
+  <section class="bordered">
+    <p class="section-label">Company snapshot</p>
+    <div class="snapshot">
+      <div class="snap-item"><p class="k">Industry</p><p class="v">Data storage / hardware</p></div>
+      <div class="snap-item"><p class="k">Market cap</p><p class="v">$196.5B</p></div>
+      <div class="snap-item"><p class="k">Revenue (FY25)</p><p class="v">$9,097M</p></div>
+      <div class="snap-item"><p class="k">Free cash flow (FY25)</p><p class="v">$818M</p></div>
+      <div class="snap-item"><p class="k">P/E ratio (FY25)</p><p class="v">21.32x</p></div>
+      <div class="snap-item"><p class="k">WACC</p><p class="v">9.00%</p></div>
+      <div class="snap-item"><p class="k">Terminal growth</p><p class="v">2.50%</p></div>
+      <div class="snap-item"><p class="k">Shares outstanding</p><p class="v">212.7M</p></div>
+    </div>
+  </section>
+
+  <section class="bordered">
+    <p class="section-label">Growth trajectory</p>
+    <div class="two-col">
+      <div class="chart-block">
+        <p class="chart-title">Revenue</p>
+        <p class="chart-sub">FY2021&ndash;FY2025, $ millions</p>
+        <div class="chart-wrap"><canvas id="stxRevChart" role="img" aria-label="Bar chart of Seagate revenue, fiscal 2021 through 2025">10,681 / 11,661 / 7,384 / 6,551 / 9,097</canvas></div>
+      </div>
+      <div class="chart-block">
+        <p class="chart-title">Free cash flow</p>
+        <div class="legend-row"><span><span class="swatch" style="background:#2a78d6;"></span>Actual</span><span><span class="swatch" style="background:#eb6834;"></span>Projected</span></div>
+        <div class="chart-wrap"><canvas id="stxFcfChart" role="img" aria-label="Line chart of Seagate free cash flow, actual 2021 to 2025 and projected 2026 to 2030">Actual: 1,128 / 1,276 / 626 / 664 / 818. Projected: 1,930 / 2,050 / 2,170 / 2,300 / 2,440</canvas></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="bordered">
+    <p class="section-label">DCF assumptions &amp; valuation summary</p>
+    <div class="two-col">
+      <table class="finance">
+        <tr><th>Assumption</th><th class="num">Value</th></tr>
+        <tr><td>WACC</td><td class="num">9.00%</td></tr>
+        <tr><td>Terminal growth</td><td class="num">2.50%</td></tr>
+        <tr><td>FCF growth (forecast)</td><td class="num">6.00%</td></tr>
+        <tr><td>Forecast horizon</td><td class="num">5 years</td></tr>
+      </table>
+      <table class="finance">
+        <tr><th>Metric</th><th class="num">$B</th></tr>
+        <tr><td>PV of forecast FCF</td><td class="num">8.39</td></tr>
+        <tr><td>Terminal value (undiscounted)</td><td class="num">38.48</td></tr>
+        <tr><td>Enterprise value</td><td class="num">33.40</td></tr>
+        <tr><td>Cash less debt</td><td class="num">-4.11</td></tr>
+        <tr><td>Equity value</td><td class="num">29.29</td></tr>
+        <tr><td>Fair value / share</td><td class="num">$137.70</td></tr>
+      </table>
+    </div>
+  </section>
+
+  <section class="bordered">
+    <p class="section-label">Scenario analysis</p>
+    <div class="scenario">
+      <div class="scen-row"><p class="scen-name">Bear</p><div class="scen-track"><div class="scen-fill" style="width:70.9%; background:#8B9099;"></div></div><p class="scen-val">$117.00</p></div>
+      <div class="scen-row"><p class="scen-name">Base</p><div class="scen-track"><div class="scen-fill" style="width:83.5%; background:#9C6A18;"></div></div><p class="scen-val">$137.70</p></div>
+      <div class="scen-row"><p class="scen-name">Bull</p><div class="scen-track"><div class="scen-fill" style="width:100%; background:#33623F;"></div></div><p class="scen-val">$165.00</p></div>
+    </div>
+  </section>
+
+  <section class="bordered">
+    <p class="section-label">Investment thesis</p>
+    <div class="thesis-grid">
+      <div class="thesis-col pos">
+        <h3>Supports</h3>
+        <ul>
+          <li>AI and cloud data-center demand for high-capacity hard drives has driven a sharp recovery — gross margin rebounded from 18.0% in FY23 to 35.2% in FY25.</li>
+          <li>Revenue snapped back 38.9% in FY25 after two consecutive years of decline, alongside disciplined cost execution.</li>
+          <li>Record profitability and continued sequential guidance suggest the storage cycle has genuinely turned, not just a one-quarter blip.</li>
+        </ul>
+      </div>
+      <div class="thesis-col risk">
+        <h3>Risks</h3>
+        <ul>
+          <li>By far the widest price-to-model gap of the three names — current price implies the market is pricing in years of sustained AI-storage upside beyond what this model captures.</li>
+          <li>The business carried negative stockholders' equity in FY24, reflecting a historically leveraged, cyclical balance sheet.</li>
+          <li>Revenue and net income have swung wildly (-37% to +39% growth in consecutive years), making this one of the harder cash flow profiles to forecast with confidence.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+  </div>
+
+  <footer>
+    Source figures compiled from company-reported financial statements and each model's own DCF assumptions. Fair value estimates depend entirely on the WACC, terminal growth, and cash flow projections chosen — changing any one materially moves the output. Seagate's underlying sheet contains unresolved data inconsistencies noted above. This dashboard is an illustrative educational model, not investment advice.
+  </footer>
+
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+const inkSoft = '#5B6472';
+const gridColor = '#DAD5C6';
+const yearsHist = ['2021','2022','2023','2024','2025'];
+const yearsFull = ['2021','2022','2023','2024','2025','2026E','2027E','2028E','2029E','2030E'];
+
+function barChart(id, data){
+  new Chart(document.getElementById(id), {
+    type: 'bar',
+    data: { labels: yearsHist, datasets: [{ data: data, backgroundColor: '#2a78d6', borderRadius: 3, maxBarThickness: 32 }] },
+    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } },
+      scales: {
+        y: { ticks: { callback: v => '$'+(v/1000)+'B', color: inkSoft, font:{family:'IBM Plex Mono', size:11} }, grid: { color: gridColor } },
+        x: { grid: { display: false }, ticks: { color: inkSoft, font:{family:'IBM Plex Mono', size:11} } }
+      } }
+  });
+}
+function fcfChart(id, actual, projected){
+  new Chart(document.getElementById(id), {
+    type: 'line',
+    data: { labels: yearsFull, datasets: [
+      { data: actual, borderColor: '#2a78d6', backgroundColor: 'transparent', borderWidth: 2, pointRadius: 3, tension: 0.15 },
+      { data: projected, borderColor: '#eb6834', backgroundColor: 'transparent', borderWidth: 2, borderDash: [5,3], pointRadius: 3, tension: 0.15 }
+    ] },
+    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } },
+      scales: {
+        y: { ticks: { callback: v => '$'+(v/1000)+'B', color: inkSoft, font:{family:'IBM Plex Mono', size:11} }, grid: { color: gridColor } },
+        x: { grid: { display: false }, ticks: { color: inkSoft, font:{family:'IBM Plex Mono', size:10}, maxRotation: 45, autoSkip: false } }
+      } }
+  });
+}
+
+barChart('msftRevChart', [168088,198270,211915,245122,281724]);
+fcfChart('msftFcfChart', [56118,65149,59475,74071,71611,null,null,null,null,null], [null,null,null,null,71611,76108,80888,85968,91366,97104]);
+
+barChart('visaRevChart', [24105,39605,44950,49690,55751]);
+fcfChart('visaFcfChart', [14522,17879,19734,18693,21577,null,null,null,null,null], [null,null,null,null,21577,21600,23330,25200,27220,29400]);
+
+barChart('stxRevChart', [10681,11661,7384,6551,9097]);
+fcfChart('stxFcfChart', [1128,1276,626,664,818,null,null,null,null,null], [null,null,null,null,818,1930,2050,2170,2300,2440]);
+</script>
+
+</body>
+</html>
