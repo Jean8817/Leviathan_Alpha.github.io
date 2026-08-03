@@ -1,6 +1,3 @@
-// ---------- TICKER TAPE ----------
-// Placeholder ticker data — replace symbols/values with whatever you want to display,
-// or wire this up to a real market data API later.
 const tickerData = [
   { symbol: "SPX", change: "+0.42%", up: true },
   { symbol: "AAPL", change: "+1.18%", up: true },
@@ -24,7 +21,6 @@ function renderTicker() {
     .join("");
 }
 
-// ---------- LIVE CLOCK / MARKET STATUS ----------
 function updateClock() {
   const clockEl = document.getElementById("market-clock");
   const statusEl = document.getElementById("market-status");
@@ -33,7 +29,6 @@ function updateClock() {
   const now = new Date();
   clockEl.textContent = now.toLocaleTimeString("en-US", { hour12: false });
 
-  // Simple placeholder logic: mark "open" 9:30–16:00 local time, weekdays only.
   const day = now.getDay();
   const minutes = now.getHours() * 60 + now.getMinutes();
   const isWeekday = day >= 1 && day <= 5;
@@ -47,7 +42,6 @@ function updateClock() {
   }
 }
 
-// ---------- COUNT-UP STATS ----------
 function animateCountUp(el) {
   const target = parseFloat(el.dataset.count);
   const suffix = el.dataset.suffix || "";
@@ -67,9 +61,6 @@ function animateCountUp(el) {
   requestAnimationFrame(tick);
 }
 
-// ---------- CHART HELPERS ----------
-// Generates a smooth-ish random walk so the placeholder chart looks alive.
-// Replace this with real equity data whenever you have it — an array of numbers works.
 function generateSeries(points, volatility, drift) {
   const series = [100];
   for (let i = 1; i < points; i++) {
@@ -108,7 +99,7 @@ function animatePath(pathEl, finalD, duration = 1400) {
   const length = pathEl.getTotalLength();
   pathEl.style.strokeDasharray = length;
   pathEl.style.strokeDashoffset = length;
-  pathEl.getBoundingClientRect(); // force reflow
+  pathEl.getBoundingClientRect();
   pathEl.style.transition = `stroke-dashoffset ${duration}ms ease`;
   requestAnimationFrame(() => {
     pathEl.style.strokeDashoffset = "0";
@@ -134,7 +125,6 @@ function renderEquityChart() {
   const width = 800;
   const height = 260;
 
-  // Draw horizontal grid lines
   if (grid) {
     grid.innerHTML = "";
     const rows = 4;
@@ -155,7 +145,6 @@ function renderEquityChart() {
   animatePath(line, linePath, 1800);
 }
 
-// ---------- SCROLL REVEAL ----------
 function initScrollReveal() {
   const items = document.querySelectorAll(".reveal");
   if (!("IntersectionObserver" in window)) {
@@ -176,7 +165,6 @@ function initScrollReveal() {
   items.forEach((el) => observer.observe(el));
 }
 
-// ---------- INIT ----------
 document.addEventListener("DOMContentLoaded", () => {
   renderTicker();
   updateClock();
