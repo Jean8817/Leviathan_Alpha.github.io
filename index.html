@@ -128,18 +128,24 @@
         <img src="Jean.png" alt="Jean Dizon, Founder & CEO of Leviathan Alpha" class="about-img">
       </div>
     </div>
-  </section>
-</div>
-  </div>
-  <div class="team-photo-card">
-    <img src="Hania.png" alt="Hania, Financial Journalist at Leviathan Alpha" class="about-img">
-    <div class="team-photo-caption">
-      <span class="team-photo-name">Hania</span>
-      <span class="team-photo-role">Financial Journalist</span>
+    <div class="team-photo-card">
+          <img src="Hania.png" alt="Hania, Financial Journalist at Leviathan Alpha" class="about-img">
+          <div class="team-photo-caption">
+            <span class="team-photo-name">Hania</span>
+            <span class="team-photo-role">Financial Journalist</span>
+          </div>
+        </div>
+      </div>
     </div>
-  </div>
-</div>
+  </section>
 
+A couple of things to double check after you paste this in:
+
+Jean's <img> also needs to be wrapped in a team-photo-card div (with a caption) to match Hania's — otherwise his photo will look styled differently than hers since the CSS rules (.team-photo-card, .team-photo-caption) only apply to that wrapper.
+Count your closing </div> tags after pasting — it's very easy to end up with one extra or one missing when combining snippets like this, and a mismatched tag can silently break the layout below it (or hide content) without throwing an obvious error in the browser.
+
+If you want, paste your whole current index.html here again and I'll check the tag balance end-to-end rather than just this section — that'll catch anything else that might have gotten mismatched.
+  
   
   <!-- PERFORMANCE -->
   <section id="performance" class="section section-alt">
