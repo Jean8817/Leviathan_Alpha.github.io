@@ -103,7 +103,8 @@
     </div>
   </header>
 
-  <!-- ABOUT -->
+  
+<!-- ABOUT -->
   <section id="about" class="section">
     <div class="section-head reveal">
       <span class="section-num">01</span>
@@ -112,11 +113,8 @@
     <div class="about-grid">
       <div class="about-text reveal">
         <p>Leviathan Alpha is a research-driven market analytics company focused on delivering data-driven insights, portfolio analysis, and investment research. We combine financial analysis, quantitative methods, and technology to help investors better understand markets, identify opportunities, and make informed decisions.</p>
-        <p>Leviathan Alpha is built on a foundation of continuous learning, disciplined research, and data-driven decision-making. Our approach combines principles from finance, quantitative analysis, and technology to evaluate opportunities through a structured and analytical lens. We believe that successful investing requires curiosity, critical thinking, and the ability to adapt as markets evolve.
-
-          
-        <p>Founded by Jean Dizon, Leviathan Alpha is driven by a passion for financial markets, portfolio analysis, and the application of technology to improve investment research. Through ongoing development in financial modeling, market analytics, and industry knowledge, we strive to build innovative solutions that help transform complex information into meaningful insights.
-.</p>
+        <p>Leviathan Alpha is built on a foundation of continuous learning, disciplined research, and data-driven decision-making. Our approach combines principles from finance, quantitative analysis, and technology to evaluate opportunities through a structured and analytical lens. We believe that successful investing requires curiosity, critical thinking, and the ability to adapt as markets evolve.</p>
+        <p>Founded by Jean Dizon, Leviathan Alpha is driven by a passion for financial markets, portfolio analysis, and the application of technology to improve investment research. Through ongoing development in financial modeling, market analytics, and industry knowledge, we strive to build innovative solutions that help transform complex information into meaningful insights.</p>
         <div class="tag-row">
           <span class="tag">Data.</span>
           <span class="tag">Research.</span>
@@ -125,27 +123,25 @@
         </div>
       </div>
       <div class="about-photo reveal">
-        <img src="Jean.png" alt="Jean Dizon, Founder & CEO of Leviathan Alpha" class="about-img">
-      </div>
-    </div>
-    <div class="team-photo-card">
-          <img src="Hania.png" alt="Hania, Financial Journalist at Leviathan Alpha" class="about-img">
+        <div class="team-photo-card">
+          <img src="Jean.png" alt="Jean Dizon, Founder & CEO of Leviathan Alpha" class="about-img">
           <div class="team-photo-caption">
-            <span class="team-photo-name">Hania</span>
-            <span class="team-photo-role">Financial Journalist</span>
+            <span class="team-photo-name">Jean Dizon</span>
+            <span class="team-photo-role">Founder & CEO</span>
           </div>
         </div>
       </div>
     </div>
+
+    <div class="team-photo-card">
+      <img src="Hania.png" alt="Hania, Financial Journalist at Leviathan Alpha" class="about-img">
+      <div class="team-photo-caption">
+        <span class="team-photo-name">Hania</span>
+        <span class="team-photo-role">Financial Journalist</span>
+      </div>
+    </div>
   </section>
 
-A couple of things to double check after you paste this in:
-
-Jean's <img> also needs to be wrapped in a team-photo-card div (with a caption) to match Hania's — otherwise his photo will look styled differently than hers since the CSS rules (.team-photo-card, .team-photo-caption) only apply to that wrapper.
-Count your closing </div> tags after pasting — it's very easy to end up with one extra or one missing when combining snippets like this, and a mismatched tag can silently break the layout below it (or hide content) without throwing an obvious error in the browser.
-
-If you want, paste your whole current index.html here again and I'll check the tag balance end-to-end rather than just this section — that'll catch anything else that might have gotten mismatched.
-  
   
   <!-- PERFORMANCE -->
   <section id="performance" class="section section-alt">
